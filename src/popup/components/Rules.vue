@@ -19,11 +19,11 @@
         :class="{ active: rule.isActive }"
       >
         <span class="rule-label">{{ index + 1 }}.</span>
-        <input type="checkbox" v-model="rule.isActive" name="box-{index}" />
+        <input type="checkbox" v-model="rule.isActive" />
         <span class="rule-label">from</span>
-        <input type="text" name="rule-from-{index}" v-model="rule.from" />
+        <input type="text" v-model="rule.from" />
         <span class="rule-label">to</span>
-        <input type="text" name="rule-to-{index}" v-model="rule.to" />
+        <input type="text" v-model="rule.to" />
         <button class="remove-rule-button" @click="removeRule(index)">-</button>
       </div>
     </div>
@@ -43,8 +43,9 @@ export default {
     activeRules: function () {
       let activeList = [];
       for (let x = 0; x < this.rules.length; x++) {
+        console.log(x);
         if (this.rules[x].isActive) {
-          activeList.push(this.rules[x]);
+          activeList.push(x);
         }
       }
       return activeList;
@@ -53,12 +54,10 @@ export default {
   methods: {
     updateSettings: function () {
       let vue = this;
-      console.log("updateSettings called");
       chrome.extension.sendMessage({
         update: true,
-        newEnv: vue.environments[vue.activeEnv].name,
-        newTestVersion: vue.testVersion,
-        newOptions: [],
+        rules: vue.rules,
+        activeRules: vue.activeRules,
       });
     },
     addRule: function () {
@@ -68,9 +67,8 @@ export default {
       this.rules.splice(index, 1);
     },
     resetSettings: function () {
-      this.activeRules = [];
-      this.rules = [this.blankRule];
-      this.updateSettings();
+      this.rules = [{ from: "", to: "", isActive: false }];
+      //this.updateSettings();
     },
   },
 
@@ -81,15 +79,9 @@ export default {
         onLoad: true,
       },
       function (response) {
-        /*console.log("onload environment");
-        let newEnv = "Prod";
-        for (let x = 0; x < vue.environments.length; x++) {
-          if (vue.environments[x].name === response.currentEnv) {
-            newEnv = vue.environments[x].envId;
-          }
-        }
-        vue.setNewEnv(newEnv);
-        vue.testVersion = response.currentTestVersion;*/
+        console.log("onload");
+        vue.rules = response.currentRules;
+        alert("rules: ", vue.rules);
       }
     );
   },

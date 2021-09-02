@@ -1,113 +1,55 @@
-var env, testVersion, enabledOptions, fsdata, fsversion;
-var pubfig = "/pubfig.min.js";
-var disabledURL = "about:blank";
-var qaURL = "/qa/pubfig.min.js";
-var localHost = "http://localhost:8000/build/dist/pubfig.js";
+var rules, activeRules;
+var fromValue, toValue;
+const defaultRule = [{ from: "", to: "", isActive: false }];
 
-if (localStorage["env"]) {
-  env = localStorage["env"];
+if (localStorage["swapRules"]) {
+  rules = localStorage["swapRules"];
+  console.log("current swapActiverules: ", rules);
 } else {
-  env = "Prod";
-  updateLocalStorage("env", env);
+  rules = defaultRule;
+  updateLocalStorage("swapRules", rules);
 }
 
-if (localStorage["testVersion"]) {
-  testVersion = localStorage["testVersion"];
+if (localStorage["swapActiverules"]) {
+  activeRules = localStorage["swapActiverules"];
+  console.log("current swapActiverules: ", activeRules);
 } else {
-  testVersion = "1";
-  updateLocalStorage("testVersion", testVersion);
-}
-
-if (localStorage["enabledOptions"]) {
-  enabledOptions = localStorage["enabledOptions"];
-} else {
-  enabledOptions = [];
-  updateLocalStorage("enabledOptions", enabledOptions);
+  activeRules = [];
+  updateLocalStorage("swapActiverules", activeRules);
 }
 
 chrome.webRequest.onBeforeRequest.addListener(
-  function (details) {
-    if (
-      details.url.indexOf(pubfig) > -1 &&
-      details.url.indexOf(qaURL) === -1 &&
-      details.url.indexOf("/test/") === -1
-    ) {
-      fsdata == '';
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        console.log(tabs[0].id);
-        chrome.tabs.sendMessage(tabs[0].id, { action: "GET_DATA" });
-      });
+  function(details) {
+    if (details.url.indexOf(fromValue) > -1) {
       console.log(details.url);
       return setEnvironment(details);
     }
   },
   {
-    urls: ["<all_urls>"],
+    urls: ["<all_urls>"]
   },
   ["blocking"]
 );
 
 function setEnvironment(details) {
-  let newURL;
-  let oldURL = pubfig;
-  if (env === "Prod") {
-    return;
-  } else if (env === "QA") {
-    newURL = qaURL;
-  } else if (env === "Test") {
-    newURL = "/test/" + testVersion + pubfig;
-  } else if (env === "Disabled") {
-    oldURL = details.url;
-    newURL = disabledURL;
-  } else if (env === "Local") {
-    oldURL = details.url;
-    newURL = localHost;
-  }
+  let newURL = toValue;
+  let oldURL = fromValue;
   return {
-    redirectUrl: details.url.replace(oldURL, newURL),
+    redirectUrl: details.url.replace(oldURL, newURL)
   };
 }
 
-
-let contentPort;
-chrome.runtime.onConnect.addListener(function (portFrom) {
-  if (portFrom.name === 'background-content') {
-    portFrom.onMessage.addListener(function (message) {
-      fsdata = message.payload.fsdata;
-      fsversion = message.payload.version;
-    });
-  }
-});
-
-
-chrome.extension.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.update) {
-    env = request.newEnv;
-    testVersion = request.newTestVersion;
-    updateLocalStorage("env", env);
-    updateLocalStorage("testVersion", testVersion);
-  } else if (request.enableLogging) {
-    const logType = request.logType;
-    updateLocalStorage("enabledOptions", enabledOptions);
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        action: "LOGGING",
-        logType: logType
-      });
-    })
+    rules = request.rules;
+    activeRules = request.activeRules;
+    updateLocalStorage("swapRules", rules);
+    updateLocalStorage("swapActiverules", activeRules);
   } else if (request.onLoad) {
-    console.log("onload env: ", env);
+    console.log("onload rules: ", rules);
+    console.log("onload active rules: ", activeRules);
     sendResponse({
-      currentEnv: env,
-      currentTestVersion: testVersion,
-      currentOptions: enabledOptions,
-    });
-  } else if (request.refreshPage) {
-    chrome.tabs.executeScript({ code: "location.reload();" });
-  } else if (request.inspectorLoad) {
-    sendResponse({
-      fsdata: fsdata,
-      fsversion: fsversion
+      currentRules: rules
     });
   }
 });
