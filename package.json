@@ -1,45 +1,45 @@
 {
-  "name": "swap",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service build --mode development --watch",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
-  },
-  "dependencies": {
-    "core-js": "^3.6.5",
-    "vue": "^2.6.11",
-    "vue-router": "^3.2.0",
-    "vuex": "^3.4.0"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/eslint-config-standard": "^5.1.2",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.2.2",
-    "lint-staged": "^9.5.0",
-    "sass": "^1.26.5",
-    "sass-loader": "^8.0.2",
-    "vue-cli-plugin-browser-extension": "latest",
-    "vue-template-compiler": "^2.6.11"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,jsx,vue}": [
-      "vue-cli-service lint",
-      "git add"
-    ]
-  }
+    "name": "qassant",
+    "version": "1.0.0",
+    "description": "This tool is intended to be used for performing QA and health checks on Freestar integrations",
+    "author": "Freestar SE Team",
+    "license": "MIT",
+    "engines": {
+        "node": ">=10"
+    },
+    "scripts": {
+        "prettier": "prettier \"src/**/*.{js,vue}\"",
+        "prettier:write": "npm run prettier -- --write",
+        "build": "cross-env NODE_ENV=production webpack --hide-modules",
+        "build:dev": "cross-env NODE_ENV=development webpack --hide-modules",
+        "build-zip": "node scripts/build-zip.js",
+        "watch": "npm run build -- --watch",
+        "watch:dev": "cross-env HMR=true npm run build:dev -- --watch"
+    },
+    "dependencies": {
+        "vue": "^2.6.10"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.1.2",
+        "@babel/plugin-proposal-optional-chaining": "^7.0.0",
+        "@babel/preset-env": "^7.1.0",
+        "@babel/runtime-corejs3": "^7.4.0",
+        "@types/chrome": "^0.0.74",
+        "archiver": "^3.0.0",
+        "babel-loader": "^8.0.2",
+        "copy-webpack-plugin": "^5.1.1",
+        "core-js": "^3.0.1",
+        "cross-env": "^5.2.0",
+        "css-loader": "^3.4.0",
+        "ejs": "^2.6.1",
+        "file-loader": "^5.0.2",
+        "mini-css-extract-plugin": "^0.9.0",
+        "node-sass": "^4.9.3",
+        "sass-loader": "^7.1.0",
+        "vue-loader": "^15.4.2",
+        "vue-template-compiler": "^2.6.10",
+        "webpack": "^4.20.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-extension-reloader": "^1.1.0"
+    }
 }
