@@ -1,6 +1,6 @@
 # swap
 
-This is an internal Chrome Extension that is intended to be used for performing QA and health checks on Freestar integrations.
+This is a tool for redirecting URLs or partial URLs for debugging.
 
 ## Setup
 
