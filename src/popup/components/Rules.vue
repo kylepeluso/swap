@@ -79,9 +79,8 @@ export default {
         onLoad: true,
       },
       function (response) {
-        console.log("onload");
+        console.log("response: ", response);
         vue.rules = response.currentRules;
-        alert("rules: ", vue.rules);
       }
     );
   },

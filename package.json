@@ -1,8 +1,8 @@
 {
-    "name": "qassant",
-    "version": "1.0.0",
-    "description": "This tool is intended to be used for performing QA and health checks on Freestar integrations",
-    "author": "Freestar SE Team",
+    "name": "swap",
+    "version": "0.1",
+    "description": "This is a URL redirect tool for debugging",
+    "author": "Kyle P. Peluso",
     "license": "MIT",
     "engines": {
         "node": ">=10"

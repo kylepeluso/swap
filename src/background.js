@@ -2,6 +2,10 @@ var rules, activeRules;
 var fromValue, toValue;
 const defaultRule = [{ from: "", to: "", isActive: false }];
 
+rules = [{ from: "google.com", to: "facebook.com", isActive: true }];
+activeRules = [0];
+
+/*
 if (localStorage["swapRules"]) {
   rules = localStorage["swapRules"];
   console.log("current swapActiverules: ", rules);
@@ -17,6 +21,7 @@ if (localStorage["swapActiverules"]) {
   activeRules = [];
   updateLocalStorage("swapActiverules", activeRules);
 }
+*/
 
 chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
