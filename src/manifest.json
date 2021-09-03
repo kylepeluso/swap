@@ -2,7 +2,7 @@
     "name": "swap",
     "version": "0.1",
     "description": "URL redirect tool for debugging",
-    "permissions": ["webRequest", "webRequestBlocking", "<all_urls>", "tabs"],
+    "permissions": ["webRequest", "webRequestBlocking", "<all_urls>", "storage"],
     "background": {
         "scripts": ["background.js"],
         "persistent": true

@@ -1,27 +1,9 @@
-var rules, activeRules;
-var fromValue, toValue;
+var rules = checkValue("swapRules"),
+  activeRules = checkValue("swapActiveRules"),
+  fromValues = [],
+  fromValue,
+  toValue;
 const defaultRule = [{ from: "", to: "", isActive: false }];
-
-rules = [{ from: "google.com", to: "facebook.com", isActive: true }];
-activeRules = [0];
-
-/*
-if (localStorage["swapRules"]) {
-  rules = localStorage["swapRules"];
-  console.log("current swapActiverules: ", rules);
-} else {
-  rules = defaultRule;
-  updateLocalStorage("swapRules", rules);
-}
-
-if (localStorage["swapActiverules"]) {
-  activeRules = localStorage["swapActiverules"];
-  console.log("current swapActiverules: ", activeRules);
-} else {
-  activeRules = [];
-  updateLocalStorage("swapActiverules", activeRules);
-}
-*/
 
 chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
@@ -49,10 +31,10 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     rules = request.rules;
     activeRules = request.activeRules;
     updateLocalStorage("swapRules", rules);
-    updateLocalStorage("swapActiverules", activeRules);
+    updateLocalStorage("swapActiveRules", activeRules);
   } else if (request.onLoad) {
+    rules = checkValue("swapRules");
     console.log("onload rules: ", rules);
-    console.log("onload active rules: ", activeRules);
     sendResponse({
       currentRules: rules
     });
@@ -60,6 +42,17 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 function updateLocalStorage(type, newValue) {
-  localStorage[type] = newValue;
+  localStorage[type] = JSON.stringify(newValue);
   console.log("new localstorage " + type + ": " + localStorage[type]);
+}
+
+function checkValue(type) {
+  let key = localStorage[type];
+  if (key) {
+    rules = JSON.parse(key);
+  } else {
+    rules = defaultRule;
+    updateLocalStorage("swapRules", rules);
+  }
+  return rules;
 }

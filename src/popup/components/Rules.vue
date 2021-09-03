@@ -19,11 +19,15 @@
         :class="{ active: rule.isActive }"
       >
         <span class="rule-label">{{ index + 1 }}.</span>
-        <input type="checkbox" v-model="rule.isActive" />
+        <input
+          type="checkbox"
+          @change="updateSettings"
+          v-model="rule.isActive"
+        />
         <span class="rule-label">from</span>
-        <input type="text" v-model="rule.from" />
+        <input type="text" @change="updateSettings" v-model.lazy="rule.from" />
         <span class="rule-label">to</span>
-        <input type="text" v-model="rule.to" />
+        <input type="text" @change="updateSettings" v-model.lazy="rule.to" />
         <button class="remove-rule-button" @click="removeRule(index)">-</button>
       </div>
     </div>
@@ -35,7 +39,7 @@ export default {
   name: "settingsPage",
   data() {
     return {
-      blankRule: { from: "", to: "", isActive: false },
+      //blankRule: { from: "", to: "", isActive: false },
       rules: [{ from: "", to: "", isActive: false }],
     };
   },
@@ -68,7 +72,7 @@ export default {
     },
     resetSettings: function () {
       this.rules = [{ from: "", to: "", isActive: false }];
-      //this.updateSettings();
+      this.updateSettings();
     },
   },
 
@@ -79,8 +83,9 @@ export default {
         onLoad: true,
       },
       function (response) {
-        console.log("response: ", response);
+        console.log("response: ", response.currentRules);
         vue.rules = response.currentRules;
+        console.log(vue.rules);
       }
     );
   },
