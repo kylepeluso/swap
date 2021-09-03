@@ -1,6 +1,6 @@
 {
     "name": "swap",
-    "version": "0.1",
+    "version": "1.0",
     "description": "URL redirect tool for debugging",
     "permissions": ["webRequest", "webRequestBlocking", "<all_urls>", "browser_action"],
     "background": {
