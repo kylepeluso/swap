@@ -1,7 +1,7 @@
 {
     "name": "swap",
-    "version": "0.1",
-    "description": "This is a URL redirect tool for debugging",
+    "version": "1.0.0",
+    "description": "A URL redirect tool for debugging",
     "author": "Kyle P. Peluso",
     "license": "MIT",
     "engines": {
