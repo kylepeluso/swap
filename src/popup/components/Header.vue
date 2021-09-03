@@ -12,8 +12,8 @@ export default {
 
 <style scoped>
 #header {
-  border-bottom: 1px solid lightgray;
-  padding-bottom: 10px;
+  border-bottom: 1px solid #47494c;
+  padding-bottom: 5px;
 }
 .header-img {
   height: 30px;

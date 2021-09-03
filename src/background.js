@@ -1,15 +1,19 @@
-var rules = checkValue("swapRules"),
-  activeRules = checkValue("swapActiveRules"),
-  fromValues = [],
-  fromValue,
-  toValue;
+var rules = checkRules(),
+  fromValues = [];
 const defaultRule = [{ from: "", to: "", isActive: false }];
 
 chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
-    if (details.url.indexOf(fromValue) > -1) {
-      console.log(details.url);
-      return setEnvironment(details);
+    for (let x = 0; x < rules.length; x++) {
+      let rule = rules[x];
+      if (rule.isActive) {
+        let fromValue = rule.from;
+        let toValue = rule.to;
+        if (details.url.indexOf(fromValue) > -1) {
+          console.log("matching URL:", details.url);
+          return getNewURL(details, fromValue, toValue);
+        }
+      }
     }
   },
   {
@@ -18,22 +22,18 @@ chrome.webRequest.onBeforeRequest.addListener(
   ["blocking"]
 );
 
-function setEnvironment(details) {
-  let newURL = toValue;
-  let oldURL = fromValue;
+function getNewURL(details, from, to) {
   return {
-    redirectUrl: details.url.replace(oldURL, newURL)
+    redirectUrl: details.url.replace(from, to)
   };
 }
 
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.update) {
     rules = request.rules;
-    activeRules = request.activeRules;
     updateLocalStorage("swapRules", rules);
-    updateLocalStorage("swapActiveRules", activeRules);
   } else if (request.onLoad) {
-    rules = checkValue("swapRules");
+    rules = checkRules();
     console.log("onload rules: ", rules);
     sendResponse({
       currentRules: rules
@@ -46,13 +46,13 @@ function updateLocalStorage(type, newValue) {
   console.log("new localstorage " + type + ": " + localStorage[type]);
 }
 
-function checkValue(type) {
-  let key = localStorage[type];
+function checkRules() {
+  let key = localStorage["swapRules"];
   if (key) {
     rules = JSON.parse(key);
   } else {
     rules = defaultRule;
-    updateLocalStorage("swapRules", rules);
+    updateLocalStorage(key, rules);
   }
   return rules;
 }

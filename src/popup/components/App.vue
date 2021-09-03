@@ -21,12 +21,12 @@ export default {
 
 <style scoped>
 #app {
-  width: 450px;
+  width: 465px;
   overflow: hidden;
   background-color: #2a2d30;
   color: #f4f4f4;
   font-size: 1.2em;
-  padding: 10px 20px 20px 20px;
+  padding: 2px 20px 20px 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
