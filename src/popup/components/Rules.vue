@@ -66,6 +66,12 @@ export default {
         if (this.rules[x].isActive) {
           activeList.push(x);
         }
+        if (activeList.length > 0) {
+          chrome.browserAction.setBadgeBackgroundColor({ color: "#006838" });
+          chrome.browserAction.setBadgeText({ text: "➔" });
+        } else {
+          chrome.browserAction.setBadgeText({ text: "" });
+        }
       }
       return activeList.length;
     },
