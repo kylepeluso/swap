@@ -1,6 +1,6 @@
+const defaultRule = [{ from: "", to: "", isActive: false }];
 var rules = checkRules(),
   fromValues = [];
-const defaultRule = [{ from: "", to: "", isActive: false }];
 
 chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
@@ -48,6 +48,7 @@ function updateLocalStorage(type, newValue) {
 
 function checkRules() {
   let key = localStorage["swapRules"];
+  let rules;
   if (key) {
     rules = JSON.parse(key);
   } else {
