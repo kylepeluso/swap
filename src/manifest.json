@@ -1,13 +1,19 @@
 {
     "name": "swap",
-    "version": "1.1",
+    "version": "2.",
     "description": "URL redirect tool for debugging",
-    "permissions": ["webRequest", "webRequestBlocking", "<all_urls>"],
-    "background": {
-        "scripts": ["background.js"],
-        "persistent": true
+    "permissions": ["declarativeNetRequest","storage"],
+    "host_permissions": [
+        "*://*/*"
+    ],
+    "declarative_net_request" : {
+        "rule_resources" : [{
+          "id": "rules",
+          "enabled": true,
+          "path": "rules.json"
+        }]
     },
-    "browser_action": {
+    "action": {
         "default_popup": "popup/popup.html",
         "default_title": "swap",
         "default_icon": "icons/s-logo-tigre-128.png"
@@ -17,5 +23,5 @@
         "48": "icons/s-logo-tigre-48.png",
         "128": "icons/s-logo-tigre-128.png"
     },
-    "manifest_version": 2
+    "manifest_version": 3
 }

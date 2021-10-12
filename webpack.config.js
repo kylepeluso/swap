@@ -88,6 +88,10 @@ const config = {
 
           return JSON.stringify(jsonContent, null, 2);
         }
+      },
+      {
+        from: "rules.json",
+        to: "rules.json"
       }
     ])
   ]

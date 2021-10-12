@@ -1,0 +1,6 @@
+[{
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "redirect", "redirect": { "url": "https://example.com" } },
+    "condition": { "urlFilter": "kylepeluso.com", "resourceTypes": ["main_frame"] }
+}]

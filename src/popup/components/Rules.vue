@@ -11,7 +11,8 @@
       <div class="hidden">
         ActiveRules: {{ activeRules }} <br />
         Rules: {{ rules }}<br />
-        Valid rules: {{ validRules }}
+        Valid rules: {{ validRules }}<br />
+        Formatted rules: {{ formattedRules }}
       </div>
       <div
         v-for="(rule, index) in rules"
@@ -67,10 +68,10 @@ export default {
           activeList.push(x);
         }
         if (activeList.length > 0) {
-          chrome.browserAction.setBadgeBackgroundColor({ color: "#006838" });
-          chrome.browserAction.setBadgeText({ text: "➔" });
+          chrome.action.setBadgeBackgroundColor({ color: "#006838" });
+          chrome.action.setBadgeText({ text: "➔" });
         } else {
-          chrome.browserAction.setBadgeText({ text: "" });
+          chrome.action.setBadgeText({ text: "" });
         }
       }
       return activeList.length;
@@ -87,14 +88,30 @@ export default {
       }
       return validRules;
     },
+    formattedRules: function () {
+      let newRules = [];
+      for (let x = this.rules.length - 1; x > 0; x--) {
+        let rule = this.rules[x];
+        if (rule.isActive) {
+          let newRule = {
+            id: x + 1,
+            priority: x + 1,
+            action: { type: "redirect", redirect: { url: rule.to } },
+            condition: { urlFilter: rule.from, resourceTypes: ["main_frame"] },
+          };
+          newRules.push(newRule);
+        }
+      }
+      chrome.declarativeNetRequest.updateDynamicRules({ addRules: newRules });
+      console.log(newRules);
+      return newRules;
+    },
   },
   methods: {
     updateSettings: function () {
       this.validateActive();
-      let vue = this;
-      chrome.extension.sendMessage({
-        update: true,
-        rules: vue.rules,
+      chrome.storage.local.set({ rules: this.rules }, function () {
+        console.log("new rules " + this.rules);
       });
     },
     addRule: function () {
@@ -119,10 +136,6 @@ export default {
       }
     },
     checkError: function (index, element) {
-      console.log("errorclicker");
-      console.log(index);
-      console.log(element);
-      console.log(!this.validRules[index]);
       if (!this.validRules[index] && element) {
         let ruleElement = document.querySelectorAll(".rule")[index];
         ruleElement.classList.add("error");
@@ -137,25 +150,30 @@ export default {
     focusLatest: function () {
       this.$nextTick(() => {
         let inputs = document.querySelectorAll(".rule-from");
-        console.log(inputs);
-        console.log(inputs[inputs.length - 1]);
         inputs[inputs.length - 1].focus();
       });
     },
   },
 
   created() {
-    var vue = this;
-    chrome.extension.sendMessage(
-      {
-        onLoad: true,
-      },
-      function (response) {
-        console.log("response: ", response.currentRules);
-        vue.rules = response.currentRules;
-        console.log(vue.rules);
+    let rules = [{ from: "", to: "", isActive: false }],
+      vue = this,
+      storedValue;
+    chrome.storage.local.get(["rules"], function (result) {
+      storedValue = result.rules;
+      if (typeof storedValue != "undefined") {
+        rules = storedValue;
+      } else {
+        chrome.storage.local.set({ rules: rules }, function () {});
       }
-    );
+      vue.rules = rules;
+    });
+  },
+
+  beforeUnmount() {
+    chrome.storage.local.set({ rules: rules }, function () {
+      console.log("on unmount, rules is set to " + rules);
+    });
   },
 };
 </script>
