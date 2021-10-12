@@ -89,8 +89,9 @@ export default {
       return validRules;
     },
     formattedRules: function () {
-      let newRules = [];
-      for (let x = this.rules.length - 1; x > 0; x--) {
+      let newRules = [],
+        numRules = [];
+      for (let x = 0; x < this.rules.length; x++) {
         let rule = this.rules[x];
         if (rule.isActive) {
           let newRule = {
@@ -102,17 +103,22 @@ export default {
           newRules.push(newRule);
         }
       }
-      chrome.declarativeNetRequest.updateDynamicRules({ addRules: newRules });
-      console.log(newRules);
-      return newRules;
+      chrome.declarativeNetRequest.getDynamicRules(function (rules) {
+        for (var x = 1; x <= rules.length; x++) {
+          numRules.push(x);
+        }
+        chrome.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds: numRules,
+          addRules: newRules,
+        });
+        return newRules;
+      });
     },
   },
   methods: {
     updateSettings: function () {
       this.validateActive();
-      chrome.storage.local.set({ rules: this.rules }, function () {
-        console.log("new rules " + this.rules);
-      });
+      chrome.storage.local.set({ rules: this.rules }, function () {});
     },
     addRule: function () {
       this.rules.push({ from: "", to: "", isActive: false });
@@ -140,7 +146,6 @@ export default {
         let ruleElement = document.querySelectorAll(".rule")[index];
         ruleElement.classList.add("error");
         element.classList.add("error");
-        console.log(element);
         setTimeout(function () {
           element.classList.remove("error");
           ruleElement.classList.remove("error");
@@ -167,12 +172,6 @@ export default {
         chrome.storage.local.set({ rules: rules }, function () {});
       }
       vue.rules = rules;
-    });
-  },
-
-  beforeUnmount() {
-    chrome.storage.local.set({ rules: rules }, function () {
-      console.log("on unmount, rules is set to " + rules);
     });
   },
 };
